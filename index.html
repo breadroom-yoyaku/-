@@ -542,8 +542,8 @@ const MAX_PER_SLOT = 3;
 
 // 予約受付期間（最大何日先まで）
 const MAX_DAYS_AHEAD = 14;
-// 前日16時を過ぎた場合は翌々日から受付（それ以前は翌日から受付）
-const CUTOFF_HOUR = 16; // 受付締切時刻（時）
+// 金曜・土曜の受付締切時刻（14時以降は翌日受取不可）
+const WEEKEND_CUTOFF_HOUR = 14;
 
 // ============================================================
 // 状態管理
@@ -709,15 +709,30 @@ function updateProductStockUI() {
 function initDatePicker() {
   const input = document.getElementById("pickup-date");
   const now = new Date();
-  // 16時以降は翌々日から、16時前は翌日から受付
-  const minDays = now.getHours() >= CUTOFF_HOUR ? 2 : 1;
+  const nowDay = now.getDay(); // 0=日, 1=月, ..., 5=金, 6=土
+  const nowHour = now.getHours();
+
+  // 当日予約不可 → 明日から開始
   const minDate = new Date(now);
-  minDate.setDate(now.getDate() + minDays);
+  minDate.setHours(0, 0, 0, 0);
+  minDate.setDate(minDate.getDate() + 1);
+
+  // 金曜14時以降 → 今週土曜をスキップして日曜へ
+  if (nowDay === 5 && nowHour >= WEEKEND_CUTOFF_HOUR) {
+    minDate.setDate(minDate.getDate() + 1);
+  }
+
+  // 土曜14時以降 → 明日の日曜もスキップして翌週土曜へ
+  if (nowDay === 6 && nowHour >= WEEKEND_CUTOFF_HOUR) {
+    minDate.setDate(minDate.getDate() + 6);
+  }
+
   // 平日の場合は次の土曜日まで進める
   const minDay = minDate.getDay();
   if (minDay !== 0 && minDay !== 6) {
     minDate.setDate(minDate.getDate() + (6 - minDay));
   }
+
   const maxDate = new Date(now);
   maxDate.setDate(now.getDate() + MAX_DAYS_AHEAD);
 

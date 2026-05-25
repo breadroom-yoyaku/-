@@ -856,6 +856,14 @@ function goToStep3() {
     errEl.classList.add("show");
     return;
   }
+
+  // 日付の厳密チェック（LINEブラウザでinput.minが無視される場合の対策）
+  const minInput = document.getElementById("pickup-date").min;
+  const dayOfWeek = new Date(date + "T00:00:00").getDay();
+  if (CLOSED_DAYS.includes(dayOfWeek) || (minInput && date < minInput)) {
+    errEl.classList.add("show");
+    return;
+  }
   if (Object.keys(cart).length === 0) {
     alert("商品が選択されていません。ステップ1に戻って商品を選び直してください。");
     return;

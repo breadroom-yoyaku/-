@@ -674,8 +674,8 @@ function changeQty(e, id, delta) {
   }
   const allMenus = [...MENUS.sets, ...MENUS.bread, ...MENUS.shu, ...MENUS.chiffon];
   const menu = allMenus.find(m => m.id === id);
-  // 在庫あり：残数を上限に、未取得時はmenu.maxを使用
-  const limit = productStock[id] !== undefined ? productStock[id] : (menu?.max || 99);
+  // 在庫あり：残数を上限に、スプレッドシート設定値→menu.maxの順で参照
+  const limit = productStock[id] !== undefined ? productStock[id] : (stockSettings[id] !== undefined ? stockSettings[id] : (menu?.max || 99));
   if (newQty > limit) return;
   cart[id] = newQty;
   document.getElementById(`num-${id}`).textContent = newQty;

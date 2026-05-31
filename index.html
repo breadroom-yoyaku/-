@@ -514,6 +514,7 @@ const MENUS = {
     { id: "b12", emoji: "🍛", name: "カレーパン",                price: 250, max: 6,  img: "images/カレーパン.png" },
     { id: "b13", emoji: "🍢", name: "ちくわパン",                price: 250, max: 6,  img: "images/ちくわパン.PNG" },
     { id: "b14", emoji: "🍞", name: "生食パン",                  price: 580, max: 2,  img: "images/生食パン.JPG" },
+    { id: "b20", emoji: "🍞", name: "米粉の半斤食パン（冷凍）",  price: 650, max: 2,  img: "images/米粉食パン半斤.JPEG" },
     { id: "b15", emoji: "🥐", name: "クロワッサンダマンド",      price: 280, max: 2, img: "images/クロワッサンダマンド.PNG" },
     { id: "b19", emoji: "🍫", name: "チョコクロワッサン",        price: 280, max: 3,  img: "images/チョコクロワッサン.jpg" },
     { id: "b16", emoji: "🥖", name: "めんたいフランス",          price: 230, max: 4,  img: "images/明太フランス最新.PNG" },
@@ -527,7 +528,7 @@ const MENUS = {
     { id: "c1", emoji: "🧀", name: "クリームチーズ米粉シフォン",            price: 300, max: 6, img: "images/クリームチーズシフォン.PNG" },
     { id: "c2", emoji: "🍫", name: "ショコラクランベリー米粉シフォン",      price: 280, max: 6, img: "images/ショコラクランベリー.PNG" },
     { id: "c3", emoji: "🍌", name: "バナナ米粉シフォン",                    price: 250, max: 6, img: "images/バナナ米粉シフォン.PNG" },
-    { id: "c4", emoji: "🫖", name: "アールグレイ",                          price: 250, max: 6, img: "images/アールグレイ米粉シフォン.PNG" },
+    { id: "c4", emoji: "🫖", name: "アールグレイ米粉シフォン",              price: 250, max: 6, img: "images/アールグレイ米粉シフォン.PNG" },
     { id: "c5", emoji: "🍫", name: "ショコラクランベリー米粉シフォンサンド", price: 380, max: 4, img: "images/ショコラクランベリーシフォンサンド最新.PNG" },
     { id: "c6", emoji: "🍌", name: "バナナシフォン米粉サンド",              price: 350, max: 4, img: "images/バナナシフォンサンド.PNG" },
     { id: "c7", emoji: "🫖", name: "アールグレイ米粉シフォンサンド",        price: 350, max: 4, img: "images/アールグレイシフォンサンド最新.PNG" },
@@ -868,6 +869,14 @@ function goToStep3() {
   const errEl = document.getElementById("datetime-error");
 
   if (!date || !selectedTime || !name) {
+    errEl.classList.add("show");
+    return;
+  }
+
+  // 日付の厳密チェック（LINEブラウザでinput.minが無視される場合の対策）
+  const minInput = document.getElementById("pickup-date").min;
+  const dayOfWeek = new Date(date + "T00:00:00").getDay();
+  if (CLOSED_DAYS.includes(dayOfWeek) || (minInput && date < minInput)) {
     errEl.classList.add("show");
     return;
   }

@@ -112,6 +112,7 @@
     }
     .menu-card .name { font-size: 13px; font-weight: 700; color: #333; }
     .menu-card .price { font-size: 12px; color: #06C755; margin-top: 2px; }
+    .menu-card .price-original { font-size: 11px; color: #999; text-decoration: line-through; margin-top: 1px; }
 
     /* 数量コントロール */
     .qty-control {
@@ -380,6 +381,13 @@
     </div>
 
     <!-- シフォンケーキ -->
+    <!-- 期間限定セット -->
+    <div class="menu-category">
+      <h3>🎁 期間限定セット</h3>
+      <div class="menu-grid" id="set-grid"></div>
+    </div>
+
+    <!-- シュークリーム -->
     <div class="menu-category">
       <h3>🍮 米粉シュークリーム</h3>
       <div class="menu-grid" id="shu-grid"></div>
@@ -487,6 +495,10 @@
 const LIFF_ID = "2009781604-UdvvBwEV"; // ← LIFFIDに置き換えてください
 
 const MENUS = {
+  sets: [
+    { id: "set1", emoji: "🎁", name: "月～水曜日申し込みの方限定！\n米粉食パンセット割", price: 2980, originalPrice: 3290, max: 3,
+      desc: "米粉1斤食パン・米粉半斤食パン・米粉塩バター2個・米粉塩バター粒あん2個・米粉チーズパン2個（計8点）" },
+  ],
   bread: [
     { id: "b1",  emoji: "🧅", name: "ねぎ角煮パン",              price: 250, max: 6, img: "images/ねぎ角煮.PNG" },
     { id: "b2",  emoji: "🌮", name: "タコスパン",                price: 250, max: 6,  img: "images/タコスパン最新.PNG" },
@@ -541,8 +553,8 @@ const MAX_PER_SLOT = 3;
 
 // 予約受付期間（最大何日先まで）
 const MAX_DAYS_AHEAD = 14;
-// 前日16時を過ぎた場合は翌々日から受付（それ以前は翌日から受付）
-const CUTOFF_HOUR = 16; // 受付締切時刻（時）
+// 受付締切時刻（14時）
+const CUTOFF_HOUR = 14;
 
 // ============================================================
 // 状態管理
@@ -574,6 +586,7 @@ async function initLiff() {
 // メニュー初期化
 // ============================================================
 function initMenus() {
+  renderMenuGrid("set-grid", MENUS.sets);
   renderMenuGrid("bread-grid", MENUS.bread);
   renderMenuGrid("shu-grid", MENUS.shu);
   renderMenuGrid("chiffon-grid", MENUS.chiffon);
@@ -586,7 +599,9 @@ function renderMenuGrid(gridId, items) {
       ${item.img
         ? `<img class="menu-img" src="${item.img}" alt="${item.name}" loading="lazy">`
         : `<span class="emoji">${item.emoji}</span>`}
-      <div class="name">${item.name}</div>
+      <div class="name">${item.name.replace(/\n/g, '<br>')}</div>
+      ${item.desc ? `<div style="font-size:10px;color:#888;margin-top:3px;line-height:1.4;">${item.desc}</div>` : ''}
+      ${item.originalPrice ? `<div class="price-original">¥${item.originalPrice.toLocaleString()}</div>` : ''}
       <div class="price">¥${item.price.toLocaleString()}</div>
       <span class="stock-badge" id="stock-${item.id}"></span>
       <div class="qty-control" id="qty-${item.id}" style="display:none;">
@@ -614,7 +629,7 @@ async function loadStockSettings() {
 }
 
 function showInitialStock() {
-  const allMenus = [...MENUS.bread, ...MENUS.shu, ...MENUS.chiffon];
+  const allMenus = [...MENUS.sets, ...MENUS.bread, ...MENUS.shu, ...MENUS.chiffon];
   for (const menu of allMenus) {
     const badge = document.getElementById(`stock-${menu.id}`);
     const card = document.getElementById(`card-${menu.id}`);
@@ -655,7 +670,7 @@ function changeQty(e, id, delta) {
     toggleMenu(id);
     return;
   }
-  const allMenus = [...MENUS.bread, ...MENUS.shu, ...MENUS.chiffon];
+  const allMenus = [...MENUS.sets, ...MENUS.bread, ...MENUS.shu, ...MENUS.chiffon];
   const menu = allMenus.find(m => m.id === id);
   // 在庫あり：残数を上限に、未取得時はmenu.maxを使用
   const limit = productStock[id] !== undefined ? productStock[id] : (menu?.max || 99);
@@ -666,7 +681,7 @@ function changeQty(e, id, delta) {
 
 function updateProductStockUI() {
   const removedFromCart = window._removedFromCart || [];
-  const allMenus = [...MENUS.bread, ...MENUS.shu, ...MENUS.chiffon];
+  const allMenus = [...MENUS.sets, ...MENUS.bread, ...MENUS.shu, ...MENUS.chiffon];
   for (const menu of allMenus) {
     const card = document.getElementById(`card-${menu.id}`);
     const badge = document.getElementById(`stock-${menu.id}`);
@@ -708,15 +723,31 @@ function updateProductStockUI() {
 function initDatePicker() {
   const input = document.getElementById("pickup-date");
   const now = new Date();
-  // 16時以降は翌々日から、16時前は翌日から受付
-  const minDays = now.getHours() >= CUTOFF_HOUR ? 2 : 1;
+  const day = now.getDay(); // 0=日, 1=月, ..., 5=金, 6=土
+  const hour = now.getHours();
+
   const minDate = new Date(now);
-  minDate.setDate(now.getDate() + minDays);
-  // 平日の場合は次の土曜日まで進める
-  const minDay = minDate.getDay();
-  if (minDay !== 0 && minDay !== 6) {
-    minDate.setDate(minDate.getDate() + (6 - minDay));
+  minDate.setHours(0, 0, 0, 0);
+
+  if (day === 5) { // 金曜日
+    if (hour < CUTOFF_HOUR) {
+      minDate.setDate(minDate.getDate() + 1); // 翌日（土）から受付
+    } else {
+      minDate.setDate(minDate.getDate() + 2); // 翌々日（日）から受付、土はスキップ
+    }
+  } else if (day === 6) { // 土曜日
+    if (hour < CUTOFF_HOUR) {
+      minDate.setDate(minDate.getDate() + 1); // 翌日（日）から受付
+    } else {
+      minDate.setDate(minDate.getDate() + 7); // 今週の日は不可、次週土から受付
+    }
+  } else if (day === 0) { // 日曜日
+    minDate.setDate(minDate.getDate() + 6); // 次の土曜から受付
+  } else { // 月〜木
+    const daysUntilSat = 6 - day;
+    minDate.setDate(minDate.getDate() + daysUntilSat); // 次の土曜から受付
   }
+
   const maxDate = new Date(now);
   maxDate.setDate(now.getDate() + MAX_DAYS_AHEAD);
 
@@ -769,7 +800,7 @@ async function renderTimeSlots() {
   }
 
   // 商品在庫を更新（スプレッドシート設定値を優先）
-  const allMenusFlat = [...MENUS.bread, ...MENUS.shu, ...MENUS.chiffon];
+  const allMenusFlat = [...MENUS.sets, ...MENUS.bread, ...MENUS.shu, ...MENUS.chiffon];
   productStock = {};
   for (const menu of allMenusFlat) {
     const max = stockSettings[menu.id] !== undefined ? stockSettings[menu.id] : (menu.max !== undefined ? menu.max : 99);
@@ -875,7 +906,7 @@ function renderConfirm() {
   }
 
   // 注文明細
-  const allMenus = [...MENUS.bread, ...MENUS.shu, ...MENUS.chiffon];
+  const allMenus = [...MENUS.sets, ...MENUS.bread, ...MENUS.shu, ...MENUS.chiffon];
   let itemsHtml = "";
   let total = 0;
 
@@ -912,7 +943,7 @@ async function submitReservation() {
   const weekdays = ["日", "月", "火", "水", "木", "金", "土"];
   const dateStr = `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日（${weekdays[d.getDay()]}）`;
 
-  const allMenus = [...MENUS.bread, ...MENUS.shu, ...MENUS.chiffon];
+  const allMenus = [...MENUS.sets, ...MENUS.bread, ...MENUS.shu, ...MENUS.chiffon];
   let itemLines = "";
   let total = 0;
 
@@ -935,7 +966,7 @@ async function submitReservation() {
   try {
     // GASに予約データを保存
     if (GAS_URL !== "YOUR_GAS_URL_HERE") {
-      const allMenusFlat = [...MENUS.bread, ...MENUS.shu, ...MENUS.chiffon];
+      const allMenusFlat = [...MENUS.sets, ...MENUS.bread, ...MENUS.shu, ...MENUS.chiffon];
       const itemsArray = Object.entries(cart).map(([id, qty]) => {
         const menu = allMenusFlat.find(m => m.id === id);
         return menu ? { id, name: menu.name, qty, max: menu.max || 99 } : null;

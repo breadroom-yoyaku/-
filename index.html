@@ -334,6 +334,69 @@
       margin-bottom: 16px;
       line-height: 1.6;
     }
+
+    .notice-warn {
+      background: #fff7ed;
+      border-left: 4px solid #f97316;
+      padding: 10px 14px;
+      font-size: 13px;
+      color: #7c2d12;
+      border-radius: 0 8px 8px 0;
+      margin-bottom: 16px;
+      line-height: 1.7;
+    }
+    .notice-warn strong { color: #c2410c; }
+
+    .notice-allergy {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      border-left: 4px solid #dc2626;
+      padding: 12px 14px;
+      font-size: 12px;
+      color: #4b5563;
+      border-radius: 0 8px 8px 0;
+      margin-bottom: 16px;
+      line-height: 1.8;
+    }
+    .notice-allergy .allergy-title {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      color: #b91c1c;
+      margin-bottom: 6px;
+    }
+    .notice-allergy ul {
+      margin: 0;
+      padding-left: 18px;
+    }
+    .notice-allergy li { margin-bottom: 4px; }
+    .notice-allergy li:last-child { margin-bottom: 0; }
+
+    .notice-shop {
+      background: #fffbeb;
+      border: 2px solid #fbbf24;
+      border-radius: 12px;
+      padding: 16px 14px;
+      margin-top: 20px;
+      text-align: center;
+      font-size: 13px;
+      color: #78350f;
+      line-height: 1.8;
+    }
+    .notice-shop .shop-title {
+      display: block;
+      font-size: 15px;
+      font-weight: 700;
+      color: #b45309;
+      margin-bottom: 6px;
+    }
+    .notice-shop .shop-sub {
+      display: block;
+      font-size: 11px;
+      color: #92400e;
+      margin-top: 8px;
+      opacity: .85;
+    }
   </style>
 </head>
 <body>
@@ -346,7 +409,7 @@
 <div id="app" style="display:none;">
   <header>
     <h1>🍞 ご予約フォーム</h1>
-    <p>パン・シフォンケーキの事前予約</p>
+    <p>小麦粉不使用（グルテンフリー）の米粉パン・シフォンケーキ</p>
   </header>
 
   <!-- ステップバー -->
@@ -369,6 +432,20 @@
   <div class="page active" id="page-1">
     <p class="section-title">メニューを選んでください</p>
 
+    <div class="notice-warn">
+      <strong>予約できる日は前日の13:59までです。</strong><br>
+      当日販売分は在庫状況をお問合せタブよりお問い合わせください。
+    </div>
+
+    <div class="notice-allergy">
+      <span class="allergy-title">⚠️ アレルギーをお持ちの方へ</span>
+      <ul>
+        <li>当店では<strong>小麦粉を使ったパンも同じ厨房・器具で製造</strong>しています。米粉の商品にも<strong>微量の小麦が混入する可能性</strong>があります。</li>
+        <li><strong>そば以外のアレルゲン</strong>（卵・乳製品・ナッツ類・大豆／豆乳 など）を使用しています。</li>
+        <li>重度のアレルギーをお持ちの方は、大変申し訳ございませんが<strong>ご購入をお控えください</strong>。</li>
+      </ul>
+    </div>
+
     <div class="notice">
       商品をタップして選択し、個数を調整してください。<br>
       複数の商品を選ぶことができます。
@@ -376,7 +453,7 @@
 
     <!-- パン -->
     <div class="menu-category">
-      <h3>🍞 パン</h3>
+      <h3>🍞 グルテンフリー米粉パン</h3>
       <div class="menu-grid" id="bread-grid"></div>
     </div>
 
@@ -389,13 +466,21 @@
 
     <!-- シュークリーム -->
     <div class="menu-category">
-      <h3>🍮 米粉シュークリーム</h3>
+      <h3>🍮 グルテンフリー米粉シュークリーム</h3>
       <div class="menu-grid" id="shu-grid"></div>
     </div>
 
     <div class="menu-category">
-      <h3>🎂 シフォンケーキ</h3>
+      <h3>🎂 グルテンフリー米粉シフォンケーキ</h3>
       <div class="menu-grid" id="chiffon-grid"></div>
+    </div>
+
+    <div class="notice-shop">
+      <span class="shop-title">🏠 店頭では週替わりの限定販売も！</span>
+      <strong>小麦粉パン</strong>や<strong>米粉総菜パン</strong>など、<br>
+      週替わりの商品を店頭にご用意しております。<br>
+      ぜひご来店をお待ちしております。
+      <span class="shop-sub">※こちらの商品はご予約を承っておりません</span>
     </div>
 
     <div id="menu-error" class="error-msg">商品を1つ以上選択してください</div>
@@ -405,6 +490,11 @@
   <!-- ページ2: 日時・名前 -->
   <div class="page" id="page-2">
     <p class="section-title">受取日時をお選びください</p>
+
+    <div class="notice-warn">
+      <strong>予約できる日は前日の13:59までです。</strong><br>
+      当日販売分は在庫状況をお問合せタブよりお問い合わせください。
+    </div>
 
     <div class="date-section">
       <div class="form-group">
@@ -467,6 +557,11 @@
       </div>
     </div>
 
+    <div class="notice-allergy">
+      <span class="allergy-title">⚠️ アレルギーについて</span>
+      小麦粉を使ったパンと同じ厨房・器具で製造しているため、米粉の商品にも微量の小麦が混入する可能性があります。また、そば以外のアレルゲン（卵・乳製品・ナッツ類・大豆／豆乳 など）を使用しています。<strong>重度のアレルギーをお持ちの方は、大変申し訳ございませんがご購入をお控えください。</strong>
+    </div>
+
     <div class="notice" style="margin-bottom:16px;">
       「予約を確定する」を押すと、LINEトークにご予約内容が送信されます。
     </div>
@@ -481,6 +576,8 @@
       <span class="complete-icon">🎉</span>
       <h2>ご予約ありがとうございます！</h2>
       <p>LINEトークにご予約内容をお送りしました。<br><br>
+        店頭では小麦粉パンや米粉総菜パンなど、<br>
+        週替わりの限定商品もご用意しております。<br><br>
         ご来店をお待ちしております。<br>
         ご不明な点はトークにてお問い合わせください。</p>
       <button class="btn btn-primary" style="margin-top:32px;" onclick="closeLiff()">閉じる</button>
@@ -501,24 +598,25 @@ const MENUS = {
       desc: "米粉1斤食パン・米粉半斤食パン・米粉塩バター2個・米粉塩バター粒あん2個・米粉チーズパン2個（計8点）" },
   ],
   bread: [
-    { id: "b1",  emoji: "🧅", name: "ねぎ角煮パン",              price: 250, max: 6, img: "images/ねぎ角煮.PNG" },
-    { id: "b2",  emoji: "🌮", name: "タコスパン",                price: 250, max: 6,  img: "images/タコスパン最新.PNG" },
-    { id: "b3",  emoji: "🍡", name: "あんぱん",                  price: 180, max: 6,  img: "images/あんぱん.JPG" },
-    { id: "b4",  emoji: "🫘", name: "ミニあんブレット",          price: 280, max: 6, img: "images/ミニあんブレット最新.PNG" },
-    { id: "b5",  emoji: "🍞", name: "プチ食パン",                price: 200, max: 2,  img: "images/プチ食パン.jpg" },
-    { id: "b6",  emoji: "🧄", name: "ガーリックオニオンベーコン", price: 290, max: 3,  img: "images/ガーリックオニオンベーコン最新の最新.PNG" },
-    { id: "b7",  emoji: "🥓", name: "ベーコンエピ",              price: 270, max: 3,  img: "images/ベーコンエピ.JPG" },
     { id: "b8",  emoji: "🥧", name: "米粉のキッシュ",            price: 480, max: 3,  img: "images/米粉のキッシュ.PNG" },
-    { id: "b10", emoji: "🌭", name: "野菜のサルサドック",        price: 300, max: 5,  img: "images/野菜のサルサドック.PNG" },
-    { id: "b11", emoji: "🥩", name: "ソーセージボード",          price: 280, max: 5, img: "images/ソーセージボード.PNG" },
-    { id: "b12", emoji: "🍛", name: "カレーパン",                price: 250, max: 6,  img: "images/カレーパン.png" },
-    { id: "b13", emoji: "🍢", name: "ちくわパン",                price: 250, max: 6,  img: "images/ちくわパン.PNG" },
-    { id: "b14", emoji: "🍞", name: "生食パン",                  price: 580, max: 2,  img: "images/生食パン.JPG" },
     { id: "b20", emoji: "🍞", name: "米粉の半斤食パン（冷凍）",  price: 650, max: 2,  img: "images/米粉食パン半斤.JPEG" },
-    { id: "b15", emoji: "🥐", name: "クロワッサンダマンド",      price: 280, max: 2, img: "images/クロワッサンダマンド.PNG" },
-    { id: "b16", emoji: "🥖", name: "めんたいフランス",          price: 230, max: 4,  img: "images/明太フランス最新.PNG" },
-    { id: "b17", emoji: "🧄", name: "クリチガーリック",          price: 250, max: 4, img: "images/クリチガーリック.PNG" },
-    { id: "b18", emoji: "🧀", name: "チーズブレット",            price: 380, max: 3,  img: "images/チーズブレット.PNG" },
+    // --- 小麦パンは販売休止のため一時的に非表示（2026-09-07）。再開時はこの下の行のコメントを外す ---
+    // { id: "b1",  emoji: "🧅", name: "ねぎ角煮パン",              price: 250, max: 6, img: "images/ねぎ角煮.PNG" },
+    // { id: "b2",  emoji: "🌮", name: "タコスパン",                price: 250, max: 6,  img: "images/タコスパン最新.PNG" },
+    // { id: "b3",  emoji: "🍡", name: "あんぱん",                  price: 180, max: 6,  img: "images/あんぱん.JPG" },
+    // { id: "b4",  emoji: "🫘", name: "ミニあんブレット",          price: 280, max: 6, img: "images/ミニあんブレット最新.PNG" },
+    // { id: "b5",  emoji: "🍞", name: "プチ食パン",                price: 200, max: 2,  img: "images/プチ食パン.jpg" },
+    // { id: "b6",  emoji: "🧄", name: "ガーリックオニオンベーコン", price: 290, max: 3,  img: "images/ガーリックオニオンベーコン最新の最新.PNG" },
+    // { id: "b7",  emoji: "🥓", name: "ベーコンエピ",              price: 270, max: 3,  img: "images/ベーコンエピ.JPG" },
+    // { id: "b10", emoji: "🌭", name: "野菜のサルサドック",        price: 300, max: 5,  img: "images/野菜のサルサドック.PNG" },
+    // { id: "b11", emoji: "🥩", name: "ソーセージボード",          price: 280, max: 5, img: "images/ソーセージボード.PNG" },
+    // { id: "b12", emoji: "🍛", name: "カレーパン",                price: 250, max: 6,  img: "images/カレーパン.png" },
+    // { id: "b13", emoji: "🍢", name: "ちくわパン",                price: 250, max: 6,  img: "images/ちくわパン.PNG" },
+    // { id: "b14", emoji: "🍞", name: "生食パン",                  price: 580, max: 2,  img: "images/生食パン.JPG" },
+    // { id: "b15", emoji: "🥐", name: "クロワッサンダマンド",      price: 280, max: 2, img: "images/クロワッサンダマンド.PNG" },
+    // { id: "b16", emoji: "🥖", name: "めんたいフランス",          price: 230, max: 4,  img: "images/明太フランス最新.PNG" },
+    // { id: "b17", emoji: "🧄", name: "クリチガーリック",          price: 250, max: 4, img: "images/クリチガーリック.PNG" },
+    // { id: "b18", emoji: "🧀", name: "チーズブレット",            price: 380, max: 3,  img: "images/チーズブレット.PNG" },
   ],
   shu: [
     { id: "s1", emoji: "🍮", name: "米粉シュークリーム", price: 380, max: 5, img: "images/米粉シュークリーム.PNG" },
